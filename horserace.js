@@ -100,9 +100,11 @@ var horseCount = 10,
         } else {
             tooltip.style.left = horseLeft+offset;
         }
+        tooltip.style.opacity = 0;
         tooltip.style.zIndex = parseInt(horse.style.zIndex, 10)+1;
         tooltip.innerHTML = "Name: " + horseInfo[num].name + "<br>Score: " + horseInfo[num].score;
         horse.parentNode.appendChild(tooltip);
+        window.setTimeout(function() { tooltip.style.opacity = 1 }, 1);
     }
     function onHorseLeave () {
         var horse = this,
