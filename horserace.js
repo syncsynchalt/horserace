@@ -125,7 +125,8 @@ var horseCount = 10,
     };
 
     (function simulateRace () {
-        var myTimer;
+        var myTimer,
+            speed = window.location.search.match(/[?&]fast/) ? 300 : 3000;
 
         myTimer = window.setInterval(function updateScores() {
             var i, horse, points;
@@ -143,6 +144,6 @@ var horseCount = 10,
                 }
                 updateHorseScore(i, horseInfo[i].score);
             }
-        }, 3000);
+        }, speed);
     })();
 }());
