@@ -147,7 +147,7 @@ var horseCount = 10,
         myTimer = window.setInterval(function updateScores() {
             var i, horse, points;
             for (i = 1; i <= horseCount; i++) {
-                if (Math.random() < 0.5-i*0.1) {
+                if (Math.random() < 0.2+i*0.01) {
                     // lower horses have more chance to get 0 points
                     continue;
                 }
