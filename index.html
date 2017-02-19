@@ -6,11 +6,13 @@ body {
     background-color: #09a;
 }
 .horse {
-    transition: left 1s ease-in-out;
+    transition: transform 0.2s ease-in,
+                left 1s ease-in-out;
+    transform: scale(1.0);
 }
 .horse:hover {
     transform: scale(1.2);
-    transition: all 0.5s ease-in;
+    transition: transform 0.3s ease-in;
 }
 .score {
     font-family: san-serif;
