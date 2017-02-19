@@ -48,7 +48,8 @@ var horseCount = 10,
             div.style.position = "fixed";
             div.style.left = 0 - 20*i;
             div.style.top = getPosition(i, 0).top;
-            div.style.backgroundImage = 'url("sine.svg")';
+            div.style.backgroundImage = 'url("sine.png")';
+            div.style.backgroundSize = '100px 160px';
             div.style.backgroundRepeat = 'repeat-x';
             field.appendChild(div);
         }
