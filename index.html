@@ -10,7 +10,7 @@ body {
                 left 1s ease-in-out;
     transform: scale(1.0);
 }
-.wave:hover .horse {
+.wave:hover .horse, .wave.touching .horse {
     transform: scale(1.2);
     transition: transform 0.3s ease-in;
 }
@@ -31,7 +31,7 @@ body {
     transition: opacity 0.3s ease-in;
     opacity: 0;
 }
-.wave:hover .tooltip {
+.wave:hover .tooltip, .wave.touching .tooltip {
     opacity: 1;
     transition: opacity 0.3s ease-in;
 }

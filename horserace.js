@@ -43,11 +43,16 @@ var horseCount = 10,
     (function makeWaves () {
         var div, i, pos, tooltip;
 
+        var waveTouchStart = function() {
+            this.className = 'wave touching';
+        }
+        var waveTouchEnd = function() {
+            this.className = 'wave';
+        }
         for (i = 1; i <= horseCount; i++) {
             div = document.createElement('div');
             div.className = 'wave';
             div.id = 'wave_'+i;
-            div.style.zIndex = getZIndex(i);
             div.style.width = '400%';
             div.style.height = '160px';
             div.style.position = "fixed";
@@ -56,14 +61,16 @@ var horseCount = 10,
             div.style.backgroundImage = 'url("sine.png")';
             div.style.backgroundSize = '100px 160px';
             div.style.backgroundRepeat = 'repeat-x';
+            div.ontouchstart = waveTouchStart;
+            div.ontouchend = waveTouchEnd;
 
             tooltip = document.createElement('span');
             tooltip.id = 'tooltip_' + i;
             tooltip.className = 'tooltip';
             tooltip.style.position = 'fixed';
-            tooltip.style.top = parseInt(div.style.top, 10) + waveHeight - 50;
+            tooltip.style.top = parseInt(div.style.top, 10) + waveHeight - 80;
             tooltip.style.left = 100;
-            tooltip.style.zIndex = getZIndex(i)+3;
+            tooltip.style.zIndex = 1;
             div.appendChild(tooltip);
             field.appendChild(div);
             updateTooltip(i);
@@ -79,7 +86,6 @@ var horseCount = 10,
                 wave = document.getElementById('wave_'+horse);
 
             span.className = 'score';
-            span.style.zIndex = getZIndex(i)+1;
             span.style.position = "fixed";
             span.style.left = pos.left;
             span.style.top = pos.top + 50;
@@ -102,7 +108,6 @@ var horseCount = 10,
             img = document.createElement('img');
             img.id = 'horse_'+i;
             img.className = 'horse';
-            img.style.zIndex = getZIndex(i)+2;
             img.style.position = 'fixed';
             img.style.left = pos.left-HORSE_LEFT_OFFSET;
             img.style.top = pos.top-20;
