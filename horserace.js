@@ -41,7 +41,7 @@ var horseCount = 10,
     }
 
     (function makeWaves () {
-        var div, i, pos, tooltip;
+        var wave, i, pos, tooltip;
 
         var waveTouchStart = function() {
             this.className = 'wave touching';
@@ -50,29 +50,29 @@ var horseCount = 10,
             this.className = 'wave';
         }
         for (i = 1; i <= horseCount; i++) {
-            div = document.createElement('div');
-            div.className = 'wave';
-            div.id = 'wave_'+i;
-            div.style.width = '400%';
-            div.style.height = '160px';
-            div.style.position = "fixed";
-            div.style.left = 0 - 20*i;
-            div.style.top = getPosition(i, 0).top;
-            div.style.backgroundImage = 'url("sine.png")';
-            div.style.backgroundSize = '100px 160px';
-            div.style.backgroundRepeat = 'repeat-x';
-            div.ontouchstart = waveTouchStart;
-            div.ontouchend = waveTouchEnd;
+            wave = document.createElement('div');
+            wave.className = 'wave';
+            wave.id = 'wave_'+i;
+            wave.style.width = '400%';
+            wave.style.height = '160px';
+            wave.style.position = "fixed";
+            wave.style.left = 0 - 20*i;
+            wave.style.top = getPosition(i, 0).top;
+            wave.style.backgroundImage = 'url("sine.png")';
+            wave.style.backgroundSize = '100px 160px';
+            wave.style.backgroundRepeat = 'repeat-x';
+            wave.ontouchstart = waveTouchStart;
+            wave.ontouchend = waveTouchEnd;
 
             tooltip = document.createElement('span');
             tooltip.id = 'tooltip_' + i;
             tooltip.className = 'tooltip';
             tooltip.style.position = 'fixed';
-            tooltip.style.top = parseInt(div.style.top, 10) + waveHeight - 80;
+            tooltip.style.top = parseInt(wave.style.top, 10) + waveHeight - 80;
             tooltip.style.left = 100;
             tooltip.style.zIndex = 1;
-            div.appendChild(tooltip);
-            field.appendChild(div);
+            wave.appendChild(tooltip);
+            field.appendChild(wave);
             updateTooltip(i);
         }
     }());
@@ -82,15 +82,15 @@ var horseCount = 10,
 
         var mark = function (horse, score) {
             var pos = getPosition(horse, score),
-                span = document.createElement('span'),
+                mark = document.createElement('span'),
                 wave = document.getElementById('wave_'+horse);
 
-            span.className = 'score';
-            span.style.position = "fixed";
-            span.style.left = pos.left;
-            span.style.top = pos.top + 50;
-            span.innerHTML = score;
-            wave.appendChild(span);
+            mark.className = 'scoremark';
+            mark.style.position = "fixed";
+            mark.style.left = pos.left;
+            mark.style.top = pos.top + 50;
+            mark.innerHTML = score;
+            wave.appendChild(mark);
         }
 
         for (i = 1; i <= horseCount; i += 3) {
@@ -101,21 +101,21 @@ var horseCount = 10,
     }());
 
     (function addHorses () {
-        var i, img, pos, wave, scale;
+        var i, horse, pos, wave, scale;
         for (i = 1; i <= horseCount; i++) {
             wave = document.getElementById('wave_'+i);
             pos = getPosition(i, 0);
-            img = document.createElement('img');
-            img.id = 'horse_'+i;
-            img.className = 'horse';
-            img.style.position = 'fixed';
-            img.style.left = pos.left-HORSE_LEFT_OFFSET;
-            img.style.top = pos.top-20;
-            img.src = "horsey.png";
+            horse = document.createElement('img');
+            horse.id = 'horse_'+i;
+            horse.className = 'horse';
+            horse.style.position = 'fixed';
+            horse.style.left = pos.left-HORSE_LEFT_OFFSET;
+            horse.style.top = pos.top-20;
+            horse.src = "horsey.png";
             scale = window.innerHeight/160/5;
-            img.height = Math.floor(160*scale);
-            img.width = Math.floor(140*scale);
-            wave.appendChild(img);
+            horse.height = Math.floor(160*scale);
+            horse.width = Math.floor(140*scale);
+            wave.appendChild(horse);
         }
     }());
 
