@@ -41,7 +41,7 @@ var horseCount = 10,
     }
 
     (function makeWaves () {
-        var wave, horse, i, pos, tooltip;
+        var wave, horse, i, mark, scoremark, markpos, pos, tooltip;
 
         var waveTouchStart = function() {
             this.className = 'wave touching';
@@ -66,6 +66,17 @@ var horseCount = 10,
             wave.ontouchstart = waveTouchStart;
             wave.ontouchend = waveTouchEnd;
 
+            for (scoremark = 0; i%3 === 1 && scoremark <= maxPoints; scoremark += 6) {
+                markpos = getPosition(i, scoremark);
+                mark = document.createElement('span');
+                mark.className = 'scoremark';
+                mark.style.position = "fixed";
+                mark.style.left = markpos.left;
+                mark.style.top = markpos.top + 50;
+                mark.innerHTML = scoremark;
+                wave.appendChild(mark);
+            }
+
             horse = document.createElement('img');
             horse.id = 'horse_'+i;
             horse.className = 'horse';
@@ -89,29 +100,6 @@ var horseCount = 10,
 
             field.appendChild(wave);
             updateTooltip(i);
-        }
-    }());
-
-    (function markScores () {
-        var i, j, mark;
-
-        var mark = function (horse, score) {
-            var pos = getPosition(horse, score),
-                mark = document.createElement('span'),
-                wave = document.getElementById('wave_'+horse);
-
-            mark.className = 'scoremark';
-            mark.style.position = "fixed";
-            mark.style.left = pos.left;
-            mark.style.top = pos.top + 50;
-            mark.innerHTML = score;
-            wave.appendChild(mark);
-        }
-
-        for (i = 1; i <= horseCount; i += 3) {
-            for (j = 0; j <= maxPoints; j += 6) {
-                mark(i, j);
-            }
         }
     }());
 
