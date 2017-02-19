@@ -2,17 +2,18 @@
 <head>
 <title>Horse Race</title>
 <style>
+@keyframes gallop {
+    0%, 100% {transform: rotate(6deg);}
+    50% {transform: rotate(-6deg);}
+}
 body {
     background-color: #09a;
 }
 .horse {
-    transition: transform 0.2s ease-in,
-                left 1s ease-in-out;
-    transform: scale(1.0);
+    transition: left 1s ease-in-out;
 }
 .wave:hover .horse, .wave.touching .horse {
-    transform: scale(1.2);
-    transition: transform 0.3s ease-in;
+    animation: gallop 1.5s infinite;
 }
 .scoremark {
     font-family: sans-serif;
