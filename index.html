@@ -20,6 +20,8 @@ body {
     font-size: 1.2em;
 }
 .wave .tooltip {
+    transition: left 1s ease-in-out,
+                opacity 0.3s ease-in;
     background-color: #222;
     border: 2px solid #aaa;
     font-family: sans-serif;
@@ -33,7 +35,8 @@ body {
 }
 .wave:hover .tooltip, .wave.touching .tooltip {
     opacity: 1;
-    transition: opacity 0.3s ease-in;
+    transition: left 1s ease-in-out,
+                opacity 0.3s ease-in;
 }
 </style>
 </head>
