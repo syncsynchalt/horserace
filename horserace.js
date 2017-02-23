@@ -1,5 +1,5 @@
 var horseCount = 10,
-    maxPoints = 48;
+    maxPoints = 45;
 
 (function app () {
     var HORSE_LEFT_OFFSET = 80,

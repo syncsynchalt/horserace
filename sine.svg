@@ -2,10 +2,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="200px" height="320px" version="1.1">
   <defs>
     <linearGradient id="linear" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#00aa55" />
-      <stop offset="100%" stop-color="#0099aa" />
+      <stop offset="0%"   stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#00aa00" />
     </linearGradient>
   </defs>
   <path d="M0 40 Q 50 0, 100 40 T 200 40 L 200 320 L 0 320 L 0 40" stroke-width="0" fill="url(#linear)" />
-  <path d="M0 40 Q 50 0, 100 40 T 200 40" stroke="white" style="fill:none" />
+  <path d="M0 40 Q 50 0, 100 40 T 200 40" stroke="green" stroke-width="3" style="fill:none" />
 </svg>
