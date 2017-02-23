@@ -3,14 +3,17 @@
 <title>Horse Race</title>
 <style>
 @keyframes gallop {
-    0%, 100% {transform: rotate(6deg);}
-    50% {transform: rotate(-6deg);}
+    0%, 100% {transform: translate(0, 0px);}
+    50% {transform: translate(0, -10px);}
 }
 body {
     background-color: #09a;
 }
 .horse {
     transition: left 1s ease-in-out;
+    margin-top: 1em;
+    height: 6em;
+    width: 6em;
 }
 .wave:hover .horse, .wave.touching .horse {
     animation: gallop 1.5s infinite;
@@ -19,6 +22,10 @@ body {
     font-family: sans-serif;
     color: #000;
     font-size: 1.2em;
+    visibility: hidden;
+}
+.wave:nth-child(3n+1) .scoremark {
+    visibility: visible;
 }
 .wave .tooltip {
     transition: left 1s ease-in-out,
