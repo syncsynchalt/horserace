@@ -1,4 +1,5 @@
 var startingHorseCount = 20,
+    scoreRange = 10,
     maxPoints = 45;
 
 (function app () {
@@ -12,7 +13,7 @@ var startingHorseCount = 20,
             scoreZone = window.innerWidth - marginWidth - 20,
             waveHeight = Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
         return {
-            left: Math.floor(marginWidth + (score/maxPoints) * scoreZone),
+            left: Math.floor(marginWidth + (score/scoreRange) * scoreZone),
             top: waveHeight*(waveNum+1)
         }
     }
@@ -66,7 +67,7 @@ var startingHorseCount = 20,
         wave.ontouchstart = function() {this.className = 'wave touching'};
         wave.ontouchend = function() {this.className = 'wave'};
 
-        for (scoremark = 0; scoremark <= maxPoints; scoremark += 6) {
+        for (scoremark = 0; scoremark <= maxPoints; scoremark += 3) {
             mark = document.createElement('span');
             mark.className = 'scoremark';
             mark.style.position = "fixed";
@@ -77,7 +78,7 @@ var startingHorseCount = 20,
         stick = document.createElement('img');
         stick.className = 'stick';
         stick.style.position = 'fixed';
-        stick.style.width = 4;
+        stick.style.width = 3;
         stick.src = "stick.png";
         wave.appendChild(stick);
 
@@ -130,17 +131,20 @@ var startingHorseCount = 20,
     };
 
     function processScores(scorelist) {
-        var i, wave;
-        for (i = 0; i < scorelist.length; i++) {
-            wave = document.getElementById('wave_' + scorelist[i].key);
-            if (!wave) {
-                addWave(scorelist[i]);
+        var maxScore = 0;
+        scorelist.forEach(function (el, i) {
+            if (!document.getElementById('wave_' + el.key)) {
+                addWave(el);
             }
-        }
-        for (i = 0; i < scorelist.length; i++) {
-            wave = document.getElementById('wave_' + scorelist[i].key);
-            updateHorseScore(wave.getElementsByClassName('horse')[0], scorelist[i]);
-        }
+        });
+        scorelist.forEach(function (el, i) {
+            var wave = document.getElementById('wave_' + el.key);
+            updateHorseScore(wave.getElementsByClassName('horse')[0], el);
+        });
+        scorelist.forEach(function (el) {
+            maxScore = el.score > maxScore ? el.score : maxScore;
+        });
+        scoreRange = Math.min(maxScore-(maxScore%15)+18, maxPoints);
         calculatePositions();
     };
 
