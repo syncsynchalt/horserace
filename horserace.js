@@ -144,7 +144,7 @@ var startingHorseCount = 20,
         scorelist.forEach(function (el) {
             maxScore = el.score > maxScore ? el.score : maxScore;
         });
-        scoreRange = Math.min(maxScore-(maxScore%15)+18, maxPoints);
+        scoreRange = Math.min(maxScore-(maxScore%18)+18, maxPoints);
         calculatePositions();
     };
 
