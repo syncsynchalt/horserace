@@ -1,4 +1,4 @@
-var startingHorseCount = 10,
+var startingHorseCount = 20,
     maxPoints = 45;
 
 (function app () {
@@ -34,18 +34,18 @@ var startingHorseCount = 10,
             wave.style.backgroundPosition = 0-20*i;
             stick = children.find(function(el) {return el.className === 'stick'});
             stick.style.left = stick.style.left || Math.floor(horseWidth/2);
-            stick.style.top = pos.top-20 + Math.floor(horseWidth/2);
+            stick.style.top = pos.top + Math.floor(horseWidth/2);
             horse = children.find(function(el) {return el.className === 'horse'});
             horse.style.width = horse.style.height = horseWidth;
             horse.style.left = horse.style.left || 0;
-            horse.style.top = pos.top-20;
+            horse.style.top = pos.top;
             tooltip = children.find(function(el) {return el.className === 'tooltip'});
             tooltip.style.top = pos.top;
 
             marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
                 markpos = getPosition(i, parseInt(marks[j].textContent, 10));
-                marks[j].style.top = markpos.top+50;
+                marks[j].style.top = markpos.top;
                 marks[j].style.left = markpos.left;
             }
         }
@@ -106,8 +106,9 @@ var startingHorseCount = 10,
         field.appendChild(wave);
         updateTooltip(horse, horseInfo);
     }
-    function removeWave (wave) {
-        wave.parentNode.remove(wave);
+    function removeWave (horseInfo) {
+        var wave = document.getElementById('wave_' + horseInfo.key);
+        wave.parentNode.removeChild(wave);
         calculatePositions();
     }
 
@@ -125,7 +126,7 @@ var startingHorseCount = 10,
             horseWidth = getHorseWidth();
         stick.style.left = pos.left-Math.floor(horseWidth/2);
         horse.style.left = pos.left-horseWidth;
-        tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +100 : -200);
+        tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +horseWidth/2+30 : -horseWidth/2-180);
         updateTooltip(horse, horseInfo);
     };
 
@@ -171,6 +172,14 @@ var startingHorseCount = 10,
 
         myTimer = window.setInterval(function simulateUpdates() {
             var i, points;
+            // simulate drop-outs (x% chance each iteration)
+            for (i = 0; i < horseInfo.length; i++) {
+                if (Math.random() < 0.01) {
+                    removeWave(horseInfo[i]);
+                    horseInfo.splice(i--, 1);
+                }
+            }
+            // increase scores
             for (i = 0; i < horseInfo.length; i++) {
                 if (Math.random() < 0.6) {
                     continue;
@@ -183,6 +192,8 @@ var startingHorseCount = 10,
                     window.clearInterval(myTimer);
                 }
             }
+            if (horseInfo.length <= 2)
+                window.clearInterval(myTimer);
             processScores(horseInfo);
         }, speed);
     })();
