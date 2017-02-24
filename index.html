@@ -3,8 +3,8 @@
 <title>Horse Race</title>
 <style>
 @keyframes gallop {
-    0%, 100% {transform: rotate(-6deg);}
-    50% {transform: rotate(6deg);}
+    0%, 100% {transform: translate(0, 0);}
+    50% {transform: translate(0, -10px);}
 }
 body {
     background-color: #09a;
@@ -15,23 +15,25 @@ body {
 }
 .horse {
     transition: left 1s ease-in-out, top 1s ease-in-out;
+    cursor: pointer;
 }
-.wave.clicked .horse {
-    transition: left 1s ease-in-out, top 1s ease-in-out;
+.wave.clicked .horse,
+.wave.clicked .stick {
     animation: gallop 0.8s infinite;
 }
 .scoremark {
     border-radius: 3em;
-    border: 0px solid grey;
     background-color: white;
     transition: left 1s ease-in-out, top 1s ease-in-out;
-    margin-top: 1em;
+    margin-top: 1.5em;
     font-family: sans-serif;
     color: #000;
     font-size: 1.2em;
     visibility: hidden;
-    min-width: 1.3em;
+    width: 1.4em;
     text-align: center;
+    box-shadow: 0 0 3px rgba(0,0,0,.5);
+    cursor: default;
 }
 .wave:nth-child(3n+1) .scoremark {
     visibility: visible;
@@ -47,6 +49,8 @@ body {
     border-radius: 5px;
     transition: opacity 0.3s ease-in;
     margin-top: -1.5em;
+    cursor: default;
+    box-shadow: 0 0 3px rgba(0,0,0,.5);
     opacity: 0;
 }
 .wave.clicked .tooltip {

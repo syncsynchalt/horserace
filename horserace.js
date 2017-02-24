@@ -58,11 +58,11 @@ var startingHorseCount = 20,
         wave.className = 'wave';
         wave.id = 'wave_' + horseInfo.key;
         wave.style.width = '400%';
-        wave.style.height = '160px';
+        wave.style.height = '300px';
         wave.style.position = "fixed";
         wave.style.left = 0;
         wave.style.backgroundImage = 'url("sine.png")';
-        wave.style.backgroundSize = '100px 160px';
+        wave.style.backgroundSize = '100px 300px';
         wave.style.backgroundRepeat = 'repeat-x';
         wave.onclick = function() {
             var waves;
