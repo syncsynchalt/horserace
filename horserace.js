@@ -45,7 +45,7 @@ var startingHorseCount = 20,
             marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
                 markpos = getPosition(i, parseInt(marks[j].textContent, 10));
-                marks[j].style.top = markpos.top;
+                marks[j].style.top = markpos.top + Math.floor(horseWidth/2);
                 marks[j].style.left = markpos.left;
             }
         }
