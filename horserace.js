@@ -48,9 +48,9 @@ var horseCount = 10,
             horse.style.top = pos.top-20;
             waveHeight = Math.floor(window.innerHeight/(horseCount+OFFSET)),
             tooltip = children.find(function(el) {return el.className === 'tooltip'});
-            tooltip.style.top = (pos.top + waveHeight - 80)+'px';
+            tooltip.style.top = pos.top + waveHeight - 70;
 
-            marks = children.filter(function(el){return el.tagName === 'SPAN'});
+            marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
                 markpos = getPosition(i, parseInt(marks[j].textContent, 10));
                 marks[j].style.top = markpos.top+50;
