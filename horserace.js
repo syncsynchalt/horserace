@@ -51,8 +51,7 @@ var startingHorseCount = 20,
         }
     }
     function addWave (horseInfo) {
-        var wave, scoremark, pos, mark,
-            horseWidth = getHorseWidth();
+        var wave, scoremark, pos, mark;
 
         wave = document.createElement('div');
         wave.className = 'wave';
@@ -64,18 +63,10 @@ var startingHorseCount = 20,
         wave.style.backgroundImage = 'url("sine.png")';
         wave.style.backgroundSize = '100px 300px';
         wave.style.backgroundRepeat = 'repeat-x';
-        wave.onclick = function() {
-            var waves;
-            if (this.classList.contains('clicked'))
-                return this.classList.remove('clicked');
-            waves = Array.prototype.slice.call(document.getElementsByClassName('wave'));
-            waves.forEach(function(el){el.classList.remove('clicked');});
-            this.classList.add('clicked');
-        }
         wave.ontouchstart = function() {this.className = 'wave touching'};
         wave.ontouchend = function() {this.className = 'wave'};
 
-        for (scoremark = 0; scoremark <= maxPoints; scoremark += 5) {
+        for (scoremark = 0; scoremark <= maxPoints; scoremark += 6) {
             mark = document.createElement('span');
             mark.className = 'scoremark';
             mark.style.position = "fixed";
@@ -94,6 +85,14 @@ var startingHorseCount = 20,
         horse.className = 'horse';
         horse.style.position = 'fixed';
         horse.src = "placeholder.png";
+        horse.onclick = function() {
+            var waves;
+            if (this.parentNode.classList.contains('clicked'))
+                return this.parentNode.classList.remove('clicked');
+            waves = Array.prototype.slice.call(document.getElementsByClassName('wave'));
+            waves.forEach(function(el){el.classList.remove('clicked');});
+            this.parentNode.classList.add('clicked');
+        }
         wave.appendChild(horse);
 
         tooltip = document.createElement('span');
@@ -124,8 +123,8 @@ var startingHorseCount = 20,
             stick = horse.parentNode.getElementsByClassName('stick')[0],
             tooltip = horse.parentNode.getElementsByClassName('tooltip')[0],
             horseWidth = getHorseWidth();
-        stick.style.left = pos.left-Math.floor(horseWidth/2);
-        horse.style.left = pos.left-horseWidth;
+        stick.style.left = pos.left;
+        horse.style.left = pos.left-Math.floor(horseWidth/2);
         tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +horseWidth/2+30 : -horseWidth/2-180);
         updateTooltip(horse, horseInfo);
     };
@@ -136,9 +135,11 @@ var startingHorseCount = 20,
             wave = document.getElementById('wave_' + scorelist[i].key);
             if (!wave) {
                 addWave(scorelist[i]);
-            } else {
-                updateHorseScore(wave.getElementsByClassName('horse')[0], scorelist[i]);
             }
+        }
+        for (i = 0; i < scorelist.length; i++) {
+            wave = document.getElementById('wave_' + scorelist[i].key);
+            updateHorseScore(wave.getElementsByClassName('horse')[0], scorelist[i]);
         }
         calculatePositions();
     };
