@@ -22,8 +22,8 @@ var horseCount = 10,
     }());
 
     function getPosition(waveNum, score) {
-        var marginWidth = Math.floor(window.innerWidth/15),
-            scoreZone = window.innerWidth - 2*marginWidth,
+        var marginWidth = getHorseWidth(),
+            scoreZone = window.innerWidth - marginWidth - 20,
             waveHeight = Math.floor(window.innerHeight/(horseCount+OFFSET));
         return {
             left: Math.floor(marginWidth + (score/maxPoints) * scoreZone),
@@ -37,18 +37,21 @@ var horseCount = 10,
     }
 
     function calculatePositions() {
-        var i, j, wave, waves, children, waveHeight, pos, horse, tooltip, marks, markpos;
+        var i, j, wave, waves, children, pos, stick, horse, tooltip, marks, markpos,
+            horseWidth = getHorseWidth();
         waves = document.getElementsByClassName('wave');
         for (i = 0; i < waves.length; i++) {
             pos = getPosition(i, 0);
             wave = waves[i];
             children = Array.prototype.slice.call(wave.children);
             wave.style.top = pos.top;
+            stick = children.find(function(el) {return el.className === 'stick'});
+            stick.style.top = pos.top-20 + Math.floor(horseWidth/2);
             horse = children.find(function(el) {return el.className === 'horse'});
+            horse.style.width = horse.style.height = horseWidth;
             horse.style.top = pos.top-20;
-            waveHeight = Math.floor(window.innerHeight/(horseCount+OFFSET)),
             tooltip = children.find(function(el) {return el.className === 'tooltip'});
-            tooltip.style.top = pos.top + waveHeight - 70;
+            tooltip.style.top = pos.top;
 
             marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
@@ -59,7 +62,8 @@ var horseCount = 10,
         }
     }
     function addWave (horseNum, horseInfo) {
-        var wave, scoremark, pos, mark;
+        var wave, scoremark, pos, mark,
+            horseWidth = getHorseWidth();
         pos = getPosition(0, 0);
 
         wave = document.createElement('div');
@@ -72,6 +76,14 @@ var horseCount = 10,
         wave.style.backgroundSize = '100px 160px';
         wave.style.backgroundRepeat = 'repeat-x';
         wave.style.backgroundPosition = 0-20*horseNum;
+        wave.onclick = function() {
+            var waves;
+            if (this.classList.contains('clicked'))
+                return this.classList.remove('clicked');
+            waves = Array.prototype.slice.call(document.getElementsByClassName('wave'));
+            waves.forEach(function(el){el.classList.remove('clicked');});
+            this.classList.add('clicked');
+        }
         wave.ontouchstart = function() {this.className = 'wave touching'};
         wave.ontouchend = function() {this.className = 'wave'};
 
@@ -83,10 +95,18 @@ var horseCount = 10,
             wave.appendChild(mark);
         }
 
+        stick = document.createElement('img');
+        stick.className = 'stick';
+        stick.style.position = 'fixed';
+        stick.style.width = 4;
+        stick.style.left = pos.left - Math.floor(horseWidth/2);
+        stick.src = "stick.png";
+        wave.appendChild(stick);
+
         horse = document.createElement('img');
         horse.className = 'horse';
         horse.style.position = 'fixed';
-        horse.style.left = pos.left-HORSE_LEFT_OFFSET;
+        horse.style.left = pos.left - horseWidth;
         horse.src = "placeholder.png";
         wave.appendChild(horse);
 
@@ -112,10 +132,17 @@ var horseCount = 10,
         calculatePositions();
     }());
 
+    function getHorseWidth() {
+        return 1.2*Math.floor(window.innerHeight/(horseCount+OFFSET));
+    };
+
     function updateHorseScore (horse, horseInfo) {
         var pos = getPosition(horse, horseInfo.score),
-            tooltip = horse.parentNode.getElementsByClassName('tooltip')[0];
-        horse.style.left = pos.left-HORSE_LEFT_OFFSET;
+            stick = horse.parentNode.getElementsByClassName('stick')[0],
+            tooltip = horse.parentNode.getElementsByClassName('tooltip')[0],
+            horseWidth = getHorseWidth();
+        stick.style.left = pos.left-Math.floor(horseWidth/2);
+        horse.style.left = pos.left-horseWidth;
         tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +100 : -200);
         updateTooltip(horse, horseInfo);
     };

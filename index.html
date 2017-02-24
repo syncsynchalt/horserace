@@ -3,19 +3,20 @@
 <title>Horse Race</title>
 <style>
 @keyframes gallop {
-    0%, 100% {transform: rotate(0deg);}
+    0%, 100% {transform: rotate(-6deg);}
     50% {transform: rotate(6deg);}
 }
 body {
     background-color: #09a;
 }
+.stick {
+    transition: left 1s ease-in-out;
+    margin-left: -3px;
+}
 .horse {
     transition: left 1s ease-in-out;
-    margin-top: 1em;
-    height: 5em;
-    width: 5em;
 }
-.wave:hover .horse, .wave.touching .horse {
+.wave.clicked .horse {
     animation: gallop 0.8s infinite;
 }
 .scoremark {
@@ -41,7 +42,7 @@ body {
     transition: opacity 0.3s ease-in;
     opacity: 0;
 }
-.wave:hover .tooltip, .wave.touching .tooltip {
+.wave.clicked .tooltip {
     opacity: 1;
 }
 </style>
