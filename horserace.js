@@ -1,4 +1,4 @@
-var horseCount = 10,
+var startingHorseCount = 10,
     maxPoints = 45;
 
 (function app () {
@@ -7,24 +7,10 @@ var horseCount = 10,
         field = document.getElementById('field'),
         horseInfo = [];
 
-    (function populateHorseInfo() {
-        var i;
-        for (i = 0; i < horseCount; i++) {
-            function randomAlpha() {
-                var ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-                return ALPHAS.charAt(Math.floor(Math.random() * ALPHAS.length));
-            }
-            horseInfo.push({
-                name: randomAlpha() + randomAlpha(),
-                score: 0
-            });
-        }
-    }());
-
     function getPosition(waveNum, score) {
         var marginWidth = getHorseWidth(),
             scoreZone = window.innerWidth - marginWidth - 20,
-            waveHeight = Math.floor(window.innerHeight/(horseCount+OFFSET));
+            waveHeight = Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
         return {
             left: Math.floor(marginWidth + (score/maxPoints) * scoreZone),
             top: waveHeight*(waveNum+1)
@@ -45,10 +31,13 @@ var horseCount = 10,
             wave = waves[i];
             children = Array.prototype.slice.call(wave.children);
             wave.style.top = pos.top;
+            wave.style.backgroundPosition = 0-20*i;
             stick = children.find(function(el) {return el.className === 'stick'});
+            stick.style.left = stick.style.left || Math.floor(horseWidth/2);
             stick.style.top = pos.top-20 + Math.floor(horseWidth/2);
             horse = children.find(function(el) {return el.className === 'horse'});
             horse.style.width = horse.style.height = horseWidth;
+            horse.style.left = horse.style.left || 0;
             horse.style.top = pos.top-20;
             tooltip = children.find(function(el) {return el.className === 'tooltip'});
             tooltip.style.top = pos.top;
@@ -61,13 +50,13 @@ var horseCount = 10,
             }
         }
     }
-    function addWave (horseNum, horseInfo) {
+    function addWave (horseInfo) {
         var wave, scoremark, pos, mark,
             horseWidth = getHorseWidth();
-        pos = getPosition(0, 0);
 
         wave = document.createElement('div');
         wave.className = 'wave';
+        wave.id = 'wave_' + horseInfo.key;
         wave.style.width = '400%';
         wave.style.height = '160px';
         wave.style.position = "fixed";
@@ -75,7 +64,6 @@ var horseCount = 10,
         wave.style.backgroundImage = 'url("sine.png")';
         wave.style.backgroundSize = '100px 160px';
         wave.style.backgroundRepeat = 'repeat-x';
-        wave.style.backgroundPosition = 0-20*horseNum;
         wave.onclick = function() {
             var waves;
             if (this.classList.contains('clicked'))
@@ -99,14 +87,12 @@ var horseCount = 10,
         stick.className = 'stick';
         stick.style.position = 'fixed';
         stick.style.width = 4;
-        stick.style.left = pos.left - Math.floor(horseWidth/2);
         stick.src = "stick.png";
         wave.appendChild(stick);
 
         horse = document.createElement('img');
         horse.className = 'horse';
         horse.style.position = 'fixed';
-        horse.style.left = pos.left - horseWidth;
         horse.src = "placeholder.png";
         wave.appendChild(horse);
 
@@ -124,20 +110,16 @@ var horseCount = 10,
         wave.parentNode.remove(wave);
         calculatePositions();
     }
-    (function makeWaves () {
-        var i;
-        for (i = 0; i < horseCount; i++) {
-            addWave(i, horseInfo[i]);
-        }
-        calculatePositions();
-    }());
 
+    function getWaveCount() {
+        return document.getElementsByClassName('wave').length;
+    };
     function getHorseWidth() {
-        return 1.2*Math.floor(window.innerHeight/(horseCount+OFFSET));
+        return 1.2*Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
     };
 
     function updateHorseScore (horse, horseInfo) {
-        var pos = getPosition(horse, horseInfo.score),
+        var pos = getPosition(0, horseInfo.score),
             stick = horse.parentNode.getElementsByClassName('stick')[0],
             tooltip = horse.parentNode.getElementsByClassName('tooltip')[0],
             horseWidth = getHorseWidth();
@@ -147,14 +129,49 @@ var horseCount = 10,
         updateTooltip(horse, horseInfo);
     };
 
+    function processScores(scorelist) {
+        var i, wave;
+        for (i = 0; i < scorelist.length; i++) {
+            wave = document.getElementById('wave_' + scorelist[i].key);
+            if (!wave) {
+                addWave(scorelist[i]);
+            } else {
+                updateHorseScore(wave.getElementsByClassName('horse')[0], scorelist[i]);
+            }
+        }
+        calculatePositions();
+    };
+
     (function simulateRace () {
+        var names = {}, name, i, horseInfo = [];
+
+        function randomAlpha () {
+            var ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            return ALPHAS.charAt(Math.floor(Math.random() * ALPHAS.length));
+        };
+        function generateName () {
+            var name;
+            while (true) {
+                name = randomAlpha() + randomAlpha();
+                if (names[name] === undefined) {
+                    names[name] = 0;
+                    return name;
+                }
+            }
+        };
+
+        for (i = 0; i < startingHorseCount; i++) {
+            name = generateName();
+            horseInfo.push({name: name, key: name, score: 0});
+        }
+        processScores(horseInfo);
+
         var myTimer,
             speed = window.location.search.match(/[?&]fast/) ? 300 : 3000;
 
-        myTimer = window.setInterval(function updateScores() {
-            var i, horse, points, horses;
-            horses = document.getElementsByClassName('horse');
-            for (i = 0; i < horses.length; i++) {
+        myTimer = window.setInterval(function simulateUpdates() {
+            var i, points;
+            for (i = 0; i < horseInfo.length; i++) {
                 if (Math.random() < 0.6) {
                     continue;
                 }
@@ -165,8 +182,8 @@ var horseCount = 10,
                     horseInfo[i].score = maxPoints;
                     window.clearInterval(myTimer);
                 }
-                updateHorseScore(horses[i], horseInfo[i]);
             }
+            processScores(horseInfo);
         }, speed);
     })();
 }());
