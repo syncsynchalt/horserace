@@ -3,10 +3,8 @@ var startingHorseCount = 20,
     maxPoints = 45;
 
 (function app () {
-    var HORSE_LEFT_OFFSET = 80,
-        OFFSET = 1,
-        field = document.getElementById('field'),
-        horseInfo = [];
+    var OFFSET = 1,
+        field = document.getElementById('field');
 
     function getPosition(waveNum, score) {
         var marginWidth = getHorseWidth(),
@@ -52,7 +50,7 @@ var startingHorseCount = 20,
         }
     }
     function addWave (horseInfo) {
-        var wave, scoremark, pos, mark;
+        var wave, scoremark, mark, stick, horse, tooltip;
 
         wave = document.createElement('div');
         wave.className = 'wave';
@@ -114,10 +112,10 @@ var startingHorseCount = 20,
 
     function getWaveCount() {
         return document.getElementsByClassName('wave').length;
-    };
+    }
     function getHorseWidth() {
         return 1.2*Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
-    };
+    }
 
     function updateHorseScore (horse, horseInfo) {
         var pos = getPosition(0, horseInfo.score),
@@ -128,7 +126,7 @@ var startingHorseCount = 20,
         horse.style.left = pos.left-Math.floor(horseWidth/2);
         tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +horseWidth/2+30 : -horseWidth/2-180);
         updateTooltip(horse, horseInfo);
-    };
+    }
 
     function processScores(scorelist) {
         var maxScore = 0;
@@ -146,7 +144,7 @@ var startingHorseCount = 20,
         });
         scoreRange = Math.min(maxScore-(maxScore%18)+18, maxPoints);
         calculatePositions();
-    };
+    }
 
     (function simulateRace () {
         var names = {}, name, i, horseInfo = [];
@@ -154,7 +152,7 @@ var startingHorseCount = 20,
         function randomAlpha () {
             var ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             return ALPHAS.charAt(Math.floor(Math.random() * ALPHAS.length));
-        };
+        }
         function generateName () {
             var name;
             while (true) {
@@ -164,7 +162,7 @@ var startingHorseCount = 20,
                     return name;
                 }
             }
-        };
+        }
 
         for (i = 0; i < startingHorseCount; i++) {
             name = generateName();
