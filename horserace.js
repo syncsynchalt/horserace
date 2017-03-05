@@ -6,14 +6,15 @@ HorseRace = {};
         OFFSET = 1,
         horserace = document.getElementById('horserace');
 
-    function getPosition(waveNum, score) {
+    function getPosition(waveNum, score, round) {
         var raceHeight = horserace.clientHeight,
             raceWidth = horserace.clientWidth,
             marginWidth = getHorseWidth(),
             scoreZone = raceWidth - marginWidth - 20,
             waveHeight = Math.floor(raceHeight/(getWaveCount()+OFFSET));
         return {
-            left: Math.floor(marginWidth + (score/scoreRange) * scoreZone),
+            left: round < 9 ? Math.floor(marginWidth + (score/scoreRange) * scoreZone)
+                            : Math.floor(marginWidth + ((score-18)/(scoreRange-18)) * scoreZone),
             top: waveHeight*(waveNum+1)
         }
     }
@@ -23,12 +24,12 @@ HorseRace = {};
         tooltip.innerHTML = "Name: " + horseInfo.name + "<br>Score: " + horseInfo.score;
     }
 
-    function calculatePositions() {
-        var i, j, wave, waves, children, pos, stick, horse, tooltip, marks, markpos,
+    function calculatePositions(round) {
+        var i, j, wave, waves, children, pos, stick, horse, marks, markpos,
             horseWidth = getHorseWidth();
         waves = document.getElementsByClassName('wave');
         for (i = 0; i < waves.length; i++) {
-            pos = getPosition(i, 0);
+            pos = getPosition(i, 0, round);
             wave = waves[i];
             children = Array.prototype.slice.call(wave.children);
             wave.style.top = pos.top;
@@ -38,11 +39,10 @@ HorseRace = {};
             horse = children.find(function(el) {return el.className === 'horse'});
             horse.style.width = horse.style.height = horseWidth;
             horse.style.left = horse.style.left || 0;
-            tooltip = children.find(function(el) {return el.className === 'tooltip'});
 
             marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
-                markpos = getPosition(i, parseInt(marks[j].textContent, 10));
+                markpos = getPosition(i, parseInt(marks[j].textContent, 10), round);
                 marks[j].style.top = Math.floor(horseWidth/2);
                 marks[j].style.left = markpos.left;
             }
@@ -109,9 +109,9 @@ HorseRace = {};
         horserace.appendChild(wave);
         updateTooltip(horse, horseInfo);
     }
-    function removeWave (key) {
+    function removeWave (key, round) {
         document.getElementById('wave_' + key).remove();
-        calculatePositions();
+        calculatePositions(round);
     }
 
     function getWaveCount() {
@@ -121,14 +121,14 @@ HorseRace = {};
         return 1.2*Math.floor(horserace.clientHeight/(getWaveCount()+OFFSET));
     }
 
-    function updateHorseScore (horse, horseInfo) {
-        var pos = getPosition(0, horseInfo.score),
+    function updateHorseScore (horse, horseInfo, round) {
+        var pos = getPosition(0, horseInfo.score, round),
             stick = horse.parentNode.getElementsByClassName('stick')[0],
             tooltip = horse.parentNode.getElementsByClassName('tooltip')[0],
             horseWidth = getHorseWidth();
         stick.style.left = pos.left;
         horse.style.left = pos.left-Math.floor(horseWidth/2);
-        tooltip.style.left = pos.left + (horseInfo.score<maxPoints/2 ? +horseWidth/2+30 : -horseWidth/2-180);
+        tooltip.style.left = pos.left + (pos.left > horserace.clientWidth/2 ? +horseWidth/2+30 : -horseWidth/2-180);
         updateTooltip(horse, horseInfo);
     }
 
@@ -152,23 +152,23 @@ HorseRace = {};
                 function (w) { return w.id.replace('wave_', ''); });
         waveKeys.forEach(function (key) {
             if (scorelist.findIndex(function(h) { return h.key == key; }) === -1) {
-                removeWave(key);
+                removeWave(key, round);
             }
         });
-        scorelist.forEach(function (el, i) {
+        scorelist.forEach(function (el) {
             if (!document.getElementById('wave_' + el.key)) {
                 addWave(el);
             }
         });
-        scorelist.forEach(function (el, i) {
+        scorelist.forEach(function (el) {
             var wave = document.getElementById('wave_' + el.key);
-            updateHorseScore(wave.getElementsByClassName('horse')[0], el);
+            updateHorseScore(wave.getElementsByClassName('horse')[0], el, round);
         });
         scorelist.forEach(function (el) {
             maxScore = el.score > maxScore ? el.score : maxScore;
         });
         scoreRange = Math.min(maxScore-(maxScore%18)+18, maxPoints);
-        calculatePositions();
+        calculatePositions(round);
     }
 
     function ajax(url, success) {
