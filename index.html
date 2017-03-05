@@ -6,23 +6,27 @@
     0%, 100% {transform: translate(0, 0);}
     50% {transform: translate(0, -10px);}
 }
-body {
+#horserace {
     background-color: #034;
     user-select: none;
+    height: 600px;
+    width: 700px;
+    position: relative;
+    overflow: hidden;
 }
-.stick {
+#horserace .stick {
     transition: all 0.3s ease-in-out;
     margin-left: -2px;
 }
-.horse {
+#horserace .horse {
     transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
-.wave.clicked .horse,
-.wave.clicked .stick {
+#horserace .wave.clicked .horse,
+#horserace .wave.clicked .stick {
     animation: gallop 0.8s infinite;
 }
-.scoremark {
+#horserace .scoremark {
     border-radius: 3em;
     background-color: #333;
     transition: all 0.3s ease-in-out;
@@ -36,10 +40,10 @@ body {
     box-shadow: 0 0 3px rgba(0,0,0,.5);
     cursor: default;
 }
-.wave:nth-child(3n+1) .scoremark {
+#horserace .wave:nth-child(3n+1) .scoremark {
     visibility: visible;
 }
-.wave .tooltip {
+#horserace .wave .tooltip {
     background-color: #222;
     border: 2px solid #aaa;
     font-family: sans-serif;
@@ -54,14 +58,17 @@ body {
     display: none;
     user-select: text;
 }
-.wave.clicked .tooltip {
+#horserace .wave.clicked .tooltip {
     transition: all 0.3s ease-in-out;
     display: inline;
 }
 </style>
 </head>
 <body>
-<div id="field">
+<p>Results of the race:
+<div style="padding: 10px">
+<div id="horserace">
+</div>
 </div>
 <script src="horserace.js"></script>
 </body>

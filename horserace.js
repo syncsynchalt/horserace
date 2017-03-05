@@ -4,12 +4,14 @@ var startingHorseCount = 20,
 
 (function app () {
     var OFFSET = 1,
-        field = document.getElementById('field');
+        horserace = document.getElementById('horserace');
 
     function getPosition(waveNum, score) {
-        var marginWidth = getHorseWidth(),
-            scoreZone = window.innerWidth - marginWidth - 20,
-            waveHeight = Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
+        var raceHeight = horserace.clientHeight,
+            raceWidth = horserace.clientWidth,
+            marginWidth = getHorseWidth(),
+            scoreZone = raceWidth - marginWidth - 20,
+            waveHeight = Math.floor(raceHeight/(getWaveCount()+OFFSET));
         return {
             left: Math.floor(marginWidth + (score/scoreRange) * scoreZone),
             top: waveHeight*(waveNum+1)
@@ -33,18 +35,15 @@ var startingHorseCount = 20,
             wave.style.backgroundPosition = 0-20*i;
             stick = children.find(function(el) {return el.className === 'stick'});
             stick.style.left = stick.style.left || Math.floor(horseWidth/2);
-            stick.style.top = pos.top + Math.floor(horseWidth/2);
             horse = children.find(function(el) {return el.className === 'horse'});
             horse.style.width = horse.style.height = horseWidth;
             horse.style.left = horse.style.left || 0;
-            horse.style.top = pos.top;
             tooltip = children.find(function(el) {return el.className === 'tooltip'});
-            tooltip.style.top = pos.top;
 
             marks = children.filter(function(el){return el.className === 'scoremark'});
             for (j = 0; j < marks.length; j++) {
                 markpos = getPosition(i, parseInt(marks[j].textContent, 10));
-                marks[j].style.top = markpos.top + Math.floor(horseWidth/2);
+                marks[j].style.top = Math.floor(horseWidth/2);
                 marks[j].style.left = markpos.left;
             }
         }
@@ -57,7 +56,7 @@ var startingHorseCount = 20,
         wave.id = 'wave_' + horseInfo.key;
         wave.style.width = '400%';
         wave.style.height = '300px';
-        wave.style.position = "fixed";
+        wave.style.position = "absolute";
         wave.style.left = 0;
         wave.style.backgroundImage = 'url("sine.png")';
         wave.style.backgroundSize = '100px 300px';
@@ -68,21 +67,23 @@ var startingHorseCount = 20,
         for (scoremark = 0; scoremark <= maxPoints; scoremark += 3) {
             mark = document.createElement('span');
             mark.className = 'scoremark';
-            mark.style.position = "fixed";
+            mark.style.position = "absolute";
             mark.innerHTML = scoremark;
             wave.appendChild(mark);
         }
 
         stick = document.createElement('img');
         stick.className = 'stick';
-        stick.style.position = 'fixed';
+        stick.style.position = 'absolute';
+        stick.style.top = '20px';
         stick.style.width = 3;
         stick.src = "stick.png";
         wave.appendChild(stick);
 
         horse = document.createElement('img');
         horse.className = 'horse';
-        horse.style.position = 'fixed';
+        horse.style.position = 'absolute';
+        horse.style.top = '0px';
         horse.src = "placeholder.png";
         horse.onclick = function() {
             var waves;
@@ -96,12 +97,13 @@ var startingHorseCount = 20,
 
         tooltip = document.createElement('span');
         tooltip.className = 'tooltip';
-        tooltip.style.position = 'fixed';
+        tooltip.style.position = 'absolute';
+        tooltip.style.top = '0px';
         tooltip.style.left = 100;
         tooltip.style.zIndex = 1;
         wave.appendChild(tooltip);
 
-        field.appendChild(wave);
+        horserace.appendChild(wave);
         updateTooltip(horse, horseInfo);
     }
     function removeWave (horseInfo) {
