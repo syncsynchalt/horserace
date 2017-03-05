@@ -1,7 +1,7 @@
 HorseRace = {};
 
 (function app () {
-    var scoreRange = 10,
+    var scoreRange = 1000,
         maxPoints = 45,
         OFFSET = 1,
         horserace = document.getElementById('horserace');
@@ -137,6 +137,11 @@ HorseRace = {};
             waveKeys,
             roundDisplay = document.getElementById('horseround');
 
+        scorelist.forEach(function (el) {
+            maxScore = el.score > maxScore ? el.score : maxScore;
+        });
+        scoreRange = Math.min(maxScore-(maxScore%18)+18, maxPoints);
+
         if (!roundDisplay) {
             roundDisplay = document.createElement('span');
             roundDisplay.id = 'horseround';
@@ -164,10 +169,6 @@ HorseRace = {};
             var wave = document.getElementById('wave_' + el.key);
             updateHorseScore(wave.getElementsByClassName('horse')[0], el, round);
         });
-        scorelist.forEach(function (el) {
-            maxScore = el.score > maxScore ? el.score : maxScore;
-        });
-        scoreRange = Math.min(maxScore-(maxScore%18)+18, maxPoints);
         calculatePositions(round);
     }
 
