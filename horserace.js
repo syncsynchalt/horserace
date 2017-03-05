@@ -1,8 +1,7 @@
 HorseRace = {};
 
 (function app () {
-    var startingHorseCount = 20,
-        scoreRange = 10,
+    var scoreRange = 10,
         maxPoints = 45,
         OFFSET = 1,
         horserace = document.getElementById('horserace');
@@ -173,12 +172,11 @@ HorseRace = {};
     }
 
     function ajax(url, success) {
-        var xhr = new XMLHttpRequest(),
-            json;
+        var xhr = new XMLHttpRequest();
         xhr.open('GET', url);
         xhr.onreadystatechange = function() {
             if (xhr.readyState>3 && xhr.status==200) {
-                json = JSON.parse(this.responseText);
+                var json = JSON.parse(this.responseText);
                 success(json);
             }
         }
@@ -187,22 +185,51 @@ HorseRace = {};
         return xhr;
     }
 
+    function getRound(event, round) {
+        if (HorseRace.inflight)
+            HorseRace.inflight.abort();
+        HorseRace.inflightRound = round;
+        HorseRace.inflight = ajax(HorseRace.base + '/EventStanding/event/'+event+'/round/'+round, function(json) {
+            processScores(json, round);
+            HorseRace.inflightRound = undefined;
+            HorseRace.inflight = undefined;
+        });
+    }
+
     HorseRace.replay = function (event, rounds) {
         var myTimer,
             round = 1,
             speed = window.location.search.match(/[?&]fast/) ? 300 : 1000;
         rounds = rounds || 15;
-        ajax('http://localhost:8042/EventStanding/event/'+event+'/round/'+round, function(json) {
-            processScores(json, round);
-        });
-        myTimer = window.setInterval(function getRound() {
+
+        getRound(event, round);
+        myTimer = window.setInterval(function roundTimer() {
             round++;
-            ajax('http://localhost:8042/EventStanding/event/'+event+'/round/'+round, function(json) {
-                processScores(json, round);
-            });
-            if (round === 15) {
+            getRound(event, round);
+            if (round === rounds) {
                 window.clearInterval(myTimer);
             }
         }, speed);
+
+        // watch for esc and arrow keys
+        document.addEventListener('keydown', function(e) {
+            var key = window.event ? e.keyCode : e.which,
+                myRound = HorseRace.inflightRound || round,
+                stop = function() {
+                    window.clearInterval(myTimer);
+                    if (HorseRace.inflight)
+                        HorseRace.inflight.abort();
+                };
+
+            if (key === 27) { // ESC
+                stop();
+            }
+            if (key === 37 || key === 39) { // left arrow, right arrow
+                stop();
+                round = (key === 37 ? myRound-1 : myRound+1);
+                getRound(event, round);
+                document.getElementById('horseround').innerHTML = 'Loading round ' + round + ' ...';
+            }
+        });
     }
 }());
