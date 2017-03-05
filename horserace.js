@@ -83,7 +83,7 @@ HorseRace = {};
         horse = document.createElement('img');
         horse.className = 'horse';
         horse.style.position = 'absolute';
-        horse.style.top = '0px';
+        horse.style.top = 0;
         if (horseInfo.img && !horseInfo.img.match('/')) {
             horseInfo.img = HorseRace.base + '/assets/race/' + horseInfo.img;
         }
@@ -101,7 +101,7 @@ HorseRace = {};
         tooltip = document.createElement('span');
         tooltip.className = 'tooltip';
         tooltip.style.position = 'absolute';
-        tooltip.style.top = '0px';
+        tooltip.style.top = 0;
         tooltip.style.left = 100;
         tooltip.style.zIndex = 1;
         wave.appendChild(tooltip);
@@ -118,7 +118,7 @@ HorseRace = {};
         return document.getElementsByClassName('wave').length;
     }
     function getHorseWidth() {
-        return 1.2*Math.floor(window.innerHeight/(getWaveCount()+OFFSET));
+        return 1.2*Math.floor(horserace.clientHeight/(getWaveCount()+OFFSET));
     }
 
     function updateHorseScore (horse, horseInfo) {
