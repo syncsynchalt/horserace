@@ -5,8 +5,6 @@
 #horserace {
     background-color: #034;
     user-select: none;
-    height: 600px;
-    width: 700px;
     position: relative;
     overflow: hidden;
 }
