@@ -7,7 +7,8 @@
     50% {transform: translate(0, -10px);}
 }
 body {
-    background-color: #09a;
+    background-color: #034;
+    user-select: none;
 }
 .stick {
     transition: all 0.3s ease-in-out;
@@ -23,11 +24,11 @@ body {
 }
 .scoremark {
     border-radius: 3em;
-    background-color: white;
+    background-color: #333;
     transition: all 0.3s ease-in-out;
     margin-left: -.6em;
     font-family: sans-serif;
-    color: #000;
+    color: #eee;
     font-size: 1.2em;
     visibility: hidden;
     width: 1.4em;
@@ -51,6 +52,7 @@ body {
     cursor: default;
     box-shadow: 0 0 3px rgba(0,0,0,.5);
     display: none;
+    user-select: text;
 }
 .wave.clicked .tooltip {
     transition: all 0.3s ease-in-out;
