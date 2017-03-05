@@ -110,8 +110,7 @@ HorseRace = {};
         updateTooltip(horse, horseInfo);
     }
     function removeWave (key) {
-        var wave = document.getElementById('wave_' + key);
-        wave.parentNode.removeChild(wave);
+        document.getElementById('wave_' + key).remove();
         calculatePositions();
     }
 
@@ -135,7 +134,7 @@ HorseRace = {};
 
     function processScores(scorelist, round) {
         var maxScore = 0,
-            waves = document.getElementsByClassName('wave'),
+            waveKeys,
             roundDisplay = document.getElementById('horseround');
 
         if (!roundDisplay) {
@@ -149,8 +148,9 @@ HorseRace = {};
             roundDisplay.innerHTML = 'Day 1 Round ' + round;
         }
 
-        Array.prototype.forEach.call(waves, function (w) {
-            var key = w.id.replace('wave_', '');
+        waveKeys = Array.prototype.map.call(document.getElementsByClassName('wave'),
+                function (w) { return w.id.replace('wave_', ''); });
+        waveKeys.forEach(function (key) {
             if (scorelist.findIndex(function(h) { return h.key == key; }) === -1) {
                 removeWave(key);
             }
