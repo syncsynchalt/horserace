@@ -1,9 +1,10 @@
-var startingHorseCount = 20,
-    scoreRange = 10,
-    maxPoints = 45;
+HorseRace = {};
 
 (function app () {
-    var OFFSET = 1,
+    var startingHorseCount = 20,
+        scoreRange = 10,
+        maxPoints = 45,
+        OFFSET = 1,
         horserace = document.getElementById('horserace');
 
     function getPosition(waveNum, score) {
@@ -84,7 +85,10 @@ var startingHorseCount = 20,
         horse.className = 'horse';
         horse.style.position = 'absolute';
         horse.style.top = '0px';
-        horse.src = "placeholder.png";
+        if (horseInfo.img && !horseInfo.img.match('/')) {
+            horseInfo.img = HorseRace.base + '/assets/race/' + horseInfo.img;
+        }
+        horse.src = horseInfo.img || "placeholder.png"
         horse.onclick = function() {
             var waves;
             if (this.parentNode.classList.contains('clicked'))
@@ -130,12 +134,25 @@ var startingHorseCount = 20,
         updateTooltip(horse, horseInfo);
     }
 
-    function processScores(scorelist) {
+    function processScores(scorelist, round) {
         var maxScore = 0,
-            waves = document.getElementsByClassName('wave');
+            waves = document.getElementsByClassName('wave'),
+            roundDisplay = document.getElementById('horseround');
+
+        if (!roundDisplay) {
+            roundDisplay = document.createElement('span');
+            roundDisplay.id = 'horseround';
+            horserace.appendChild(roundDisplay);
+        }
+        if (round > 9) {
+            roundDisplay.innerHTML = 'Day 2 Round ' + round;
+        } else {
+            roundDisplay.innerHTML = 'Day 1 Round ' + round;
+        }
+
         Array.prototype.forEach.call(waves, function (w) {
             var key = w.id.replace('wave_', '');
-            if (scorelist.findIndex(function(h) { return h.key === key; }) === -1) {
+            if (scorelist.findIndex(function(h) { return h.key == key; }) === -1) {
                 removeWave(key);
             }
         });
@@ -155,70 +172,37 @@ var startingHorseCount = 20,
         calculatePositions();
     }
 
-    (function simulateRace () {
-        var names = {}, name, i, horseInfo = [];
-
-        function randomAlpha () {
-            var ALPHAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            return ALPHAS.charAt(Math.floor(Math.random() * ALPHAS.length));
-        }
-        function generateName () {
-            var name;
-            while (true) {
-                name = randomAlpha() + randomAlpha();
-                if (names[name] === undefined) {
-                    names[name] = 0;
-                    return name;
-                }
+    function ajax(url, success) {
+        var xhr = new XMLHttpRequest(),
+            json;
+        xhr.open('GET', url);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState>3 && xhr.status==200) {
+                json = JSON.parse(this.responseText);
+                success(json);
             }
         }
-        function getMinScore () {
-            var minScore;
-            horseInfo.forEach(function(h) {
-                if (minScore === undefined || h.score < minScore)
-                    minScore = h.score;
-            });
-            return minScore;
-        }
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.send();
+        return xhr;
+    }
 
-        for (i = 0; i < startingHorseCount; i++) {
-            name = generateName();
-            horseInfo.push({name: name, key: name, score: 0});
-        }
-        processScores(horseInfo);
-
+    HorseRace.replay = function (event, rounds) {
         var myTimer,
-            speed = window.location.search.match(/[?&]fast/) ? 300 : 3000;
-
-        myTimer = window.setInterval(function simulateUpdates() {
-            var i, points, name;
-            // simulate drop-outs (x% chance each iteration)
-            for (i = 0; i < horseInfo.length; i++) {
-                if (Math.random() < 0.01) {
-                    horseInfo.splice(i--, 1);
-                    // 30% of the time replace with a new horse
-                    if (Math.random() < 0.3) {
-                        name = generateName();
-                        horseInfo.push({name: name, key: name, score: getMinScore()});
-                    }
-                }
-            }
-            // increase scores
-            for (i = 0; i < horseInfo.length; i++) {
-                if (Math.random() < 0.6) {
-                    continue;
-                }
-                points = Math.floor(-1 + Math.random()*4);
-                points = points < 0 ? 0 : points;
-                horseInfo[i].score += points;
-                if (horseInfo[i].score >= maxPoints) {
-                    horseInfo[i].score = maxPoints;
-                    window.clearInterval(myTimer);
-                }
-            }
-            if (horseInfo.length <= 2)
+            round = 1,
+            speed = window.location.search.match(/[?&]fast/) ? 300 : 1000;
+        rounds = rounds || 15;
+        ajax('http://localhost:8042/EventStanding/event/'+event+'/round/'+round, function(json) {
+            processScores(json, round);
+        });
+        myTimer = window.setInterval(function getRound() {
+            round++;
+            ajax('http://localhost:8042/EventStanding/event/'+event+'/round/'+round, function(json) {
+                processScores(json, round);
+            });
+            if (round === 15) {
                 window.clearInterval(myTimer);
-            processScores(horseInfo);
+            }
         }, speed);
-    })();
+    }
 }());
