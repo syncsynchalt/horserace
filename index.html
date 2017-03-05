@@ -1,66 +1,17 @@
 <html>
 <head>
 <title>Horse Race</title>
+<link href="horserace.css" rel="stylesheet">
 <style>
-@keyframes gallop {
-    0%, 100% {transform: translate(0, 0);}
-    50% {transform: translate(0, -10px);}
+body {
+    background-color: #034;
+}
+p {
+    color: lightgrey;
+    font-family: sans-serif;
 }
 #horserace {
-    background-color: #034;
-    user-select: none;
-    height: 600px;
-    width: 700px;
-    position: relative;
-    overflow: hidden;
-}
-#horserace .stick {
-    transition: all 0.3s ease-in-out;
-    margin-left: -2px;
-}
-#horserace .horse {
-    transition: all 0.3s ease-in-out;
-    cursor: pointer;
-}
-#horserace .wave.clicked .horse,
-#horserace .wave.clicked .stick {
-    animation: gallop 0.8s infinite;
-}
-#horserace .scoremark {
-    border-radius: 3em;
-    background-color: #333;
-    transition: all 0.3s ease-in-out;
-    margin-left: -.6em;
-    font-family: sans-serif;
-    color: #eee;
-    font-size: 1.2em;
-    visibility: hidden;
-    width: 1.4em;
-    text-align: center;
-    box-shadow: 0 0 3px rgba(0,0,0,.5);
-    cursor: default;
-}
-#horserace .wave:nth-child(3n+1) .scoremark {
-    visibility: visible;
-}
-#horserace .wave .tooltip {
-    background-color: #222;
-    border: 2px solid #aaa;
-    font-family: sans-serif;
-    font-size: 1.2em;
-    color: #ddd;
-    padding: 1em;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: -1.5em;
-    cursor: default;
-    box-shadow: 0 0 3px rgba(0,0,0,.5);
-    display: none;
-    user-select: text;
-}
-#horserace .wave.clicked .tooltip {
-    transition: all 0.3s ease-in-out;
-    display: inline;
+    border: 2px solid darkslategray;
 }
 </style>
 </head>
