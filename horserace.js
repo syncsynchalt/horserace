@@ -106,8 +106,8 @@ var startingHorseCount = 20,
         horserace.appendChild(wave);
         updateTooltip(horse, horseInfo);
     }
-    function removeWave (horseInfo) {
-        var wave = document.getElementById('wave_' + horseInfo.key);
+    function removeWave (key) {
+        var wave = document.getElementById('wave_' + key);
         wave.parentNode.removeChild(wave);
         calculatePositions();
     }
@@ -131,7 +131,14 @@ var startingHorseCount = 20,
     }
 
     function processScores(scorelist) {
-        var maxScore = 0;
+        var maxScore = 0,
+            waves = document.getElementsByClassName('wave');
+        Array.prototype.forEach.call(waves, function (w) {
+            var key = w.id.replace('wave_', '');
+            if (scorelist.findIndex(function(h) { return h.key === key; }) === -1) {
+                removeWave(key);
+            }
+        });
         scorelist.forEach(function (el, i) {
             if (!document.getElementById('wave_' + el.key)) {
                 addWave(el);
@@ -165,6 +172,14 @@ var startingHorseCount = 20,
                 }
             }
         }
+        function getMinScore () {
+            var minScore;
+            horseInfo.forEach(function(h) {
+                if (minScore === undefined || h.score < minScore)
+                    minScore = h.score;
+            });
+            return minScore;
+        }
 
         for (i = 0; i < startingHorseCount; i++) {
             name = generateName();
@@ -176,12 +191,16 @@ var startingHorseCount = 20,
             speed = window.location.search.match(/[?&]fast/) ? 300 : 3000;
 
         myTimer = window.setInterval(function simulateUpdates() {
-            var i, points;
+            var i, points, name;
             // simulate drop-outs (x% chance each iteration)
             for (i = 0; i < horseInfo.length; i++) {
                 if (Math.random() < 0.01) {
-                    removeWave(horseInfo[i]);
                     horseInfo.splice(i--, 1);
+                    // 30% of the time replace with a new horse
+                    if (Math.random() < 0.3) {
+                        name = generateName();
+                        horseInfo.push({name: name, key: name, score: getMinScore()});
+                    }
                 }
             }
             // increase scores
